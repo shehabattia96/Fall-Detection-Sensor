@@ -7,22 +7,28 @@
  * IR LED should be connected in series with a 100 ohm resistor.
  */
 
-#define LED_PIN 5
 #define LDR_PIN A0
 void setup() {
   Serial.begin(9600);
-  pinMode(LED_PIN,OUTPUT);
-  digitalWrite(LED_PIN,HIGH); // Turn LED On
 }
 
 float getVoltage(long analogReading){
   return analogReading * (5.0 / 1023.0); //Scale analogue value between 0.0 and 5.0
 }
 
-float voltage; //Stores the voltage acquired from analoguePin
+float voltage,mapped_voltage; //Stores the voltage acquired from analoguePin
 void loop() {
-    // read the input on analog pin and convert it to a voltage:
-    voltage = getVoltage(analogRead(LDR_PIN));
+  // read the input on analog pin and convert it to a voltage:
+  voltage = getVoltage(analogRead(LDR_PIN));
+  mapped_voltage = voltage<=0?0:(log10(voltage)+10);
 
-    Serial.println(voltage);
+
+  //Plot on the Serial plotter
+  Serial.print(0);  // Freeze lower limit
+  Serial.print(" ");
+  Serial.print(5);  // Freeze upper limit
+  Serial.print(" ");
+  Serial.print(voltage);
+  Serial.print(" ");
+  Serial.println(mapped_voltage);
 }
