@@ -3,31 +3,31 @@
  * Turns IR LED lights on and reads voltage from the Light Dependent Resistors (LDR). 
  * Materials: https://docs.google.com/spreadsheets/d/1NsnAO1yCBl094IOnQEU04WQaSiIHoZ0Vb58qgTnDUq4/edit#gid=544518370 (Prototype 2 sheet)
  * 
- * LDR should be connected in series with a 200kOhm resistor.
- * Analog pin: A0
+ * Circuit voltage divider: LDR should be connected in series with a 200kOhm resistor.
+ * Analog pins: A0->A5
  * If using ADC:
   ADS1115 -->  UNO
     VDD        5V
     GND        GND
     SCL        A5 (or SCL)
     SDA        A4 (or SDA)
-    ADS1115 library: https://github.com/baruch/ADS1115/blob/master/
+    ADS1115 library: https://github.com/baruch/ADS1115/
 */
 
-// Settings
-#define using_ADS1115 true // Are we using an Analog-to-Digital converter (ADS1115)
-#define using_MatrixDisplay true
+// Script Settings
+#define using_ADS1115 false // Are we using an Analog-to-Digital converter (ADS1115)?
+#define using_MatrixDisplay false // Matrix display is the LED strip used in headless testing.
+#define num_sensors 5
 
 // Variables
-float voltage; //Stores the voltage acquired from analoguePin
+float voltage[num_sensors]; //Stores the voltage acquired from analoguePin
 
 // Analog Pin definition
 #if using_ADS1115
-  #include <ADS1115.h> //From https://github.com/baruch/ADS1115/blob/master/
+  #include <ADS1115.h> //From https://github.com/baruch/ADS1115/
   #define LDR_PIN ADS1115_MUX_GND_AIN0
   ADS1115 adc;
-#else
-  #define LDR_PIN A0
+  // TODO: Change I2C address of ADS1115 and get values from two devices.
 #endif
 
 //Matrix Display 
@@ -74,13 +74,21 @@ float getVoltage(long analogReading){
 void loop() {
   // Read the voltage from A0
   #if using_ADS1115
-    voltage = adc.read_sample_float();
+    voltage[0] = adc.read_sample_float();
+    // Print the voltage
+    Serial.println(voltage[0]);
   #else
-    voltage = getVoltage(analogRead(LDR_PIN));
+    Serial.print(0);
+    Serial.print(" ");
+    Serial.print(5);
+    for (int i=0;i<num_sensors;i++){
+      voltage[i] = getVoltage(analogRead(i));
+      Serial.print(" ");
+      Serial.print(voltage[i] );
+    }
+    Serial.println(" ");
   #endif
 
-  // Print the voltage
-  Serial.println(voltage);
 
   // Display on Matrix Display
   #if using_MatrixDisplay

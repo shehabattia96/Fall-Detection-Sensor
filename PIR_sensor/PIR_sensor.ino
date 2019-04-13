@@ -2,23 +2,19 @@
  * PIR sensor tester. References https://learn.adafruit.com/pir-passive-infrared-proximity-motion-sensor/connecting-to-a-pir 
  */
  
-int ledPin = 13;                // choose the pin for the LED
 int inputPin = 2;               // choose the input pin (for PIR sensor)
 int pirState = LOW;             // we start, assuming no motion detected
 int val = 0;                    // variable for reading the pin status
  
 void setup() {
-  pinMode(ledPin, OUTPUT);      // declare LED as output
-  pinMode(inputPin, INPUT);     // declare sensor as input
- 
+  pinMode(inputPin, INPUT);     // declare sensor as input 
   Serial.begin(9600);
 }
  
 void loop(){
   val = digitalRead(inputPin);  // read input value
   Serial.println(val);
-  if (val == HIGH) {            // check if the input is HIGH
-    digitalWrite(ledPin, HIGH);  // turn LED ON
+  if (val == HIGH) {            // check if the input is HIGH 
     if (pirState == LOW) {
       // we have just turned on
       Serial.println("Motion detected!");
@@ -26,7 +22,6 @@ void loop(){
       pirState = HIGH;
     }
   } else {
-    digitalWrite(ledPin, LOW); // turn LED OFF
     if (pirState == HIGH){
       // we have just turned of
       Serial.println("Motion ended!");
